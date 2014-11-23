@@ -13,6 +13,22 @@
   font: 10px sans-serif;
   text-anchor: middle;
 }
+
+body { font: 12px Arial;}
+
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
   </style>
 </head>
 <body>
@@ -20,8 +36,10 @@
 <svg class="chart"></svg>
 
   <script type="text/javascript" src="libs/d3.js"></script>
-  <script type="text/javascript" src="volume-chart.js"></script>
+  <script type="text/javascript" src="Chart.js"></script>
+  <script type="text/javascript" src="VolumeChart.js"></script>
   <script type="text/javascript" src="currency-path-chart.js"></script>
+  <script type="text/javascript" src="line-chart.js"></script>
   <script type="text/javascript" src="index.js"></script>
 
 </body>
