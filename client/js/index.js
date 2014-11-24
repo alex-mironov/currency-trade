@@ -19,10 +19,27 @@ data.forEach(function(d) {
     d.date = parseDate(d.date);
 });
 
+
+
 var width = 960,
     height = 500;
 
-var volumeChart = new VolumeChart('.chart', width, height);
+var volumeChart = new VolumeChart({
+  selector: 'body',
+  width: width,
+  height: height
+});
 volumeChart.draw(data);
 
+var lineChart = new LineChart({
+  selector: 'body',
+  width: width,
+  height: height,
+  margin: {
+    left: 40,
+    right: 40,
+    top: 20,
+    bottom: 20
+  }
+});
 lineChart.draw(data);
