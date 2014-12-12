@@ -49,4 +49,14 @@ LineChart.prototype.draw = function(data) {
   svgLayout.append("g")
     .attr("class", "y axis")
     .call(yAxis);
+
+    // $('svg circle').tooltipsy({ 
+    //     gravity: 'w', 
+    //     html: true, 
+    //     title: function() {
+    //       var d = this.__data__;
+    //       debugger;
+    //       return 'Hi there! ' + d + ' </span>'; 
+    //     }
+    //   });
 };

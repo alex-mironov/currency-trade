@@ -24,6 +24,7 @@ var width = 960,
 
 var volumeChart = new VolumeChart({
   selector: 'body',
+  className: 'currency-volume',
   width: width,
   height: height
 });
@@ -31,6 +32,7 @@ volumeChart.draw(data);
 
 var lineChart = new LineChart({
   selector: 'body',
+  className: 'currency-line',
   width: width,
   height: height,
   margin: {
@@ -40,4 +42,5 @@ var lineChart = new LineChart({
     bottom: 20
   }
 });
+
 lineChart.draw(data);

@@ -1,9 +1,12 @@
+.currency-volume text {
+  fill: white;
+}
+
 rect {
   fill: steelblue;
 }
 
 text {
-  /*fill: white;*/
   font: 10px sans-serif;
   text-anchor: middle;
 }
@@ -28,4 +31,14 @@ path {
   stroke: #3E85A2;
   stroke-width: 1;
   fill: #fff;
+}
+
+
+.tooltipsy
+{
+    padding: 10px;
+    max-width: 200px;
+    color: #303030;
+    background-color: #f5f5b5;
+    border: 1px solid #deca7e;
 }

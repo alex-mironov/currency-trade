@@ -10,6 +10,7 @@ function Chart(options) {
 
   this.el = d3.select(options.selector)
     .append("svg")
+      .attr('class', options.className)
       .attr('width', options.width)
       .attr('height', options.height);
 
