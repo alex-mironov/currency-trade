@@ -1,103 +1,172 @@
-// Se crean las dimenciones de la grafica, segun la convencion de margenes de mike bostock http://bl.ocks.org/mbostock/3019563
+// Dribbble rebound to CodePen crossover: http://drbl.in/jxHT
 
-var margin = {top: 30, right: 20, bottom: 30, left: 50},
-    width = 600 - margin.left - margin.right,
-    height = 270 - margin.top - margin.bottom;
+var w = 780,
+  h = 350,
+  vis = null,
+  g,
+  current,
+  duration = 700,
+  ease = "cubic-out",
+  reset = [0,0,0,0,0,0,0,0,0,0,0,0,0];
 
-// Se le da formato a la fecha tiempo
-var parseDate = d3.time.format("%d-%b-%y").parse;
-
-// Se crean los rangosy las escalas
-var xScale = d3.time.scale()
-  .range([0, width]);
-var yScale = d3.scale.linear()
-  .range([height, 0]);
-
-// DEfino los ejes
-var xAxis = d3.svg.axis()
-  .scale(xScale)
-  .orient("bottom")
-  .ticks(5);
-
-var yAxis = d3.svg.axis()
-  .scale(yScale)
-  .orient("left")
-  .ticks(5);
-
-// Defino la linea
-var linea = d3.svg.line()
-  .x(function(d) { 
-    return xScale(d.date); 
-  })
-  .y(function(d) { 
-    return yScale(d.close); 
-  });
+function draw(id) {
+  var data = generateData(),
+  other_data = generateOtherData(),
+  margin = 30,
+  y = d3.scale.linear().domain([0, d3.max(data)]).range([0 + margin, h - 60]),
+  x = d3.scale.linear().domain([0, data.length]).range([0 + margin, w + 50]),
+  line = d3.svg.line()
+    .x(function(d,i) { return x(i); })
+    .y(function(d) { return -1 * y(d); });
     
-// Agrego el lienzo svg
-var svg = d3.select("body")
-  .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");
+  console.log(data);
 
-// Recupero los datos
-d3.csv("https://gist.githubusercontent.com/d3noob/7030f35b72de721622b8/raw/8e8fa245a969331ec1bdcfba51fd51d19098d3a0/data.csv", function(error, data) {
-    data.forEach(function(d) {
-      d.date = parseDate(d.date);
-      d.close = +d.close;
-    });
+  var vis = d3.select("#entity-chart").select("svg").select("g");
+  
+  if (vis.empty()) {
+    vis = d3.select("#entity-chart")
+      .append("svg:svg")
+      .attr("width", w)
+      .attr("height", h);
+          
+        // -- had to remove drop shadows ---
+        // -- made transitions all funky :( ---
+        // filters go in defs element
+        // var defs = vis.append("defs");
+        // 
+        // var filter = defs.append("filter")
+        //     .attr("id", "drop-shadow")
+        //     .attr("height", "135%");
+        // 
+        // filter.append("feGaussianBlur")
+        //     .attr("in", "SourceAlpha")
+        //     .attr("stdDeviation", 10)
+        //     .attr("result", "blur");
+        // 
+        // filter.append("feOffset")
+        //     .attr("in", "blur")
+        //     .attr("dx", 0)
+        //     .attr("dy", 10)
+        //     .attr("result", "offsetBlur");
+        // 
+        // var feMerge = filter.append("feMerge");
+        // 
+        // feMerge.append("feMergeNode")
+        //     .attr("in", "offsetBlur");     
+        // feMerge.append("feMergeNode")
+        //     .attr("in", "SourceGraphic");
+      
+    g = vis.append("svg:g")
+      .attr("transform", "translate(0, 350)");
 
-    // Scale the range of the data
-    xScale.domain(d3.extent(data, function(d) { return d.date; }));
-    yScale.domain([0, d3.max(data, function(d) { return d.close; })]);
-
-    // Add the valueline path.
-    svg.append("path")
-      .attr("class", "line")
-      .attr("d", linea(data));
-
-    // Add the X Axis
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-    // Add the Y Axis
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
-
-});
-
-// ** Update data section (Called from the onclick)
-function actualizarData() {
-
-    // Get the data again
-    d3.csv("https://gist.githubusercontent.com/d3noob/7030f35b72de721622b8/raw/9fe55a381fbd301a8e9bd96c2ba28a87999099d4/data-alt.csv", function(error, data) {
-        data.forEach(function(d) {
-        d.date = parseDate(d.date);
-        d.close = +d.close;
-      });
-
-      // Scale the range of the data again 
-      xScale.domain(d3.extent(data, function(d) { return d.date; }));
-      yScale.domain([0, d3.max(data, function(d) { return d.close; })]);
-
-    // Select the section we want to apply our changes to
-    var svg = d3.select("body").transition();
-
-    // Make the changes
-        svg.select(".line")   // change the line
-            .duration(750)
-            .attr("d", linea(data));
-        svg.select(".x.axis") // change the x axis
-            .duration(750)
-            .call(xAxis);
-        svg.select(".y.axis") // change the y axis
-            .duration(750)
-            .call(yAxis);
-
-    });
+    g.append("svg:line")
+      .attr("x1", x(0))
+      .attr("y1", -1 * y(0))
+      .attr("x2", x(w))
+      .attr("y2", -1 * y(0))
+  
+    g.selectAll(".xLabel")
+      .data(x.ticks(12))
+      .enter().append("svg:text")
+      .attr("class", "xLabel")
+      .text(String)
+      .attr("x", function(d) { return x(d-1) })
+      .attr("y", 0)
+      .attr("text-anchor", "middle");
+  }
+      
+  g.append("svg:path")
+    .attr("class", id)
+    .attr("d", line(reset))
+        // .style("filter", "url(#drop-shadow)")
+    .transition().duration(duration).ease(ease)
+    .attr("d", line(data));
+            
+  g.selectAll("dot")
+    .data(data)
+    .enter().append("circle")
+    .attr("class", id)
+    .attr("r", 6.5)
+    .attr("cx", function(d,i) { return x(i); })
+    .attr("cy", 0)
+    .transition().duration(duration).ease(ease)
+    .attr("cy", function(d) { return -1 * y(d); })
+    .attr("title", function(d,i) { return x(i); });
+      
+    current = id;
+    console.log("current = "+current, "data = "+data);
+  
+  $('svg circle').tipsy({ 
+    gravity: 's', 
+    html: true,
+        fade: true,
+        opacity: 0.95,
+    title: function() {
+    var d = this.__data__;
+      console.log(this);
+    var pDate = d.date;
+    return 'Metric: ' + Math.floor(d); 
+    }
+  });
 }
+
+function removeData(id) {
+  d3.selectAll("circle."+id)
+    .transition().duration(duration).ease(ease)
+    .attr("cy", 0)
+    .attr("r", 0)
+    .remove();
+  d3.selectAll("path."+id).remove();
+}
+
+function generateData() {
+  var data = [];
+  for (var i = 0, l = 12; i < l; i++) {
+      data.push(Math.round(Math.random() * l))
+  }
+  return data;
+}
+function generateOtherData() {
+  var other_data = [3,9,3,1,5,4,4,5,6,9,4,2];
+  return other_data;
+}
+function subMetricChange() {
+  $('.benchmarks-checkbox').on('change', function(e) {
+    id = $(this).attr("id");
+    if ($(this).is(":checked")) {
+      $(this).parent().addClass("active");
+      draw(id);
+    } else {
+      removeData(id);
+      $(this).parent().removeClass("active");
+    }
+    e.preventDefault();
+  });
+  
+  $('button[type="submit"]').on('click', function(e) {
+    $('.benchmarks-checkbox').prop('checked', false);
+    $('.benchmarks-label').removeClass("active");
+    id = $(this).attr("id");
+    $(".sub-metric-checkbox").parent().removeClass("active");
+    d3.selectAll("circle")
+      .transition().duration(duration).ease(ease)
+      .attr("cy", 0)
+      .attr("r", 0)
+      .remove();
+    d3.selectAll("path").remove();
+    
+    $(this).parent().addClass("active");
+    draw(id);
+    e.preventDefault();
+  });
+}
+function pageInit() {
+  $('#Scoring-Metric-1').addClass("first").attr("checked", "checked").parent().addClass("active");
+  id = $('.sub-metric-checkbox.first').attr("id");
+  draw(id);
+}
+
+$(document).ready( function() {
+  subMetricChange();
+  pageInit();
+});

@@ -19,10 +19,8 @@ data.forEach(function(d) {
     d.date = parseDate(d.date);
 });
 
-
-
 var width = 960,
-    height = 500;
+  height = 500;
 
 var volumeChart = new VolumeChart({
   selector: 'body',

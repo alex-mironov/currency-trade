@@ -30,6 +30,15 @@ LineChart.prototype.draw = function(data) {
     .attr("class", "line")
     .attr("d", line(data));
 
+ svgLayout.selectAll("circle")
+  .data(data).enter().append("svg:circle")
+    .attr('class', 'linedot')
+    .attr("cx", function(d, i) { return xScale(d.date); })
+    .attr("cy", function(d, i) { return yScale(d.vol); })
+    .attr('r', function() { return 4; })
+  .append("svg:title")
+    .text(function(d) { return d.vol; });
+
   // Add the X Axis
   svgLayout.append("g")
     .attr("class", "x axis")
@@ -41,4 +50,3 @@ LineChart.prototype.draw = function(data) {
     .attr("class", "y axis")
     .call(yAxis);
 };
- 
